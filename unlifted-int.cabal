@@ -1,0 +1,63 @@
+cabal-version: 2.4
+
+name:         unlifted-int
+category:     Data
+version:      1.0.0
+synopsis:     Facilities for working with unlifted integers.
+description:  Facilities for working with unlifted integers.
+license:      BSD-3-Clause
+license-file: LICENSE
+build-type:   Simple
+
+author:     jake
+maintainer: jacobleach@protonmail.com
+copyright:  2022, Jacob Leach
+
+extra-source-files:
+  CHANGELOG.md
+  README.md
+
+tested-with:
+  GHC == 9.2.1
+
+common common
+  default-language: Haskell2010
+
+  ghc-options:
+    -Wall
+    -Wcompat
+    -Wmissing-import-lists
+    -Wincomplete-record-updates
+    -Wincomplete-uni-patterns
+    -Wredundant-constraints
+    -Widentities
+    -Wredundant-constraints
+    -Wpartial-fields
+    -Wunused-packages
+
+  build-depends:
+    , base
+
+library
+  import:         common
+  hs-source-dirs: src
+
+  exposed-modules:
+    Data.Int.Unlifted
+
+  build-depends:
+    , ghc-prim
+    , unlifted-bool
+
+-- test-suite examples
+--   import:         common
+--   type:           exitcode-stdio-1.0
+--   hs-source-dirs: examples
+--   main-is:        Example.hs
+
+--   build-depends:
+--     , unlifted-bool
+
+source-repository head
+  type:     git
+  location: https://github.com/riz0id/unlifted-int

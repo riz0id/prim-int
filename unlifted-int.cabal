@@ -2,7 +2,7 @@ cabal-version: 2.4
 
 name:         unlifted-int
 category:     Data
-version:      1.0.0
+version:      0.1.0.0
 synopsis:     Facilities for working with unlifted integers.
 description:  Facilities for working with unlifted integers.
 license:      BSD-3-Clause
@@ -47,7 +47,7 @@ library
 
   build-depends:
     , ghc-prim
-    , unlifted-bool
+    , unlifted-bool >= 0.1.1.0
 
 -- test-suite examples
 --   import:         common

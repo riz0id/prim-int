@@ -46,8 +46,8 @@ library
     Data.Int.Unlifted
 
   build-depends:
-    , ghc-prim
-    , unlifted-bool >= 0.1.1.0
+    , ghc-prim >= 0.8.0
+    , unlifted-bool >= 1.1.1
 
 -- test-suite examples
 --   import:         common

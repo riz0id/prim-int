@@ -4,4 +4,10 @@ let
   pkgs = import ./default.nix {
     inherit ghc;
   };
-in pkgs.unlifted-int.env
+in pkgs.prim-int.env.overrideAttrs (self: {
+  buildInputs = self.buildInputs ++ [
+    pkgs.cabal-install
+    pkgs.clang
+    pkgs.llvm
+  ];
+})

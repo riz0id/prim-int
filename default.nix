@@ -9,8 +9,8 @@ let
         "${ghc}" = super.haskell.packages."${ghc}".override (old: {
           overrides = let
             sources = self.haskell.lib.packageSourceOverrides {
-              "unlifted-bool" = import nix/pkgs/unlifted-bool.nix { };
-              "unlifted-int"  = ./.;
+              unlifted-bool = import nix/pkgs/unlifted-bool.nix { };
+              prim-int = ./.;
             };
 
             default = old.overrides or (_: _: { });
@@ -26,5 +26,6 @@ let
   };
 
 in {
-  inherit (pkgs.haskell.packages."${ghc}") unlifted-int;
+  inherit (pkgs.haskell.packages."${ghc}") prim-int;
+  inherit (pkgs) cabal-install clang llvm;
 }

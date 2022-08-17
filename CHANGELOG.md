@@ -1,4 +1,4 @@
-# Revision history for unlifted-int
+# Revision history for prim-int
 
 ## 1.0.0 -- 2022-03-11
 

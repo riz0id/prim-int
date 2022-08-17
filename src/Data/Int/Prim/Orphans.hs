@@ -1,17 +1,16 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE TemplateHaskellQuotes #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 -- |
 -- Module      :  Data.Int.Prim.Orphans
 -- Copyright   :  (c) Jacob Leach, 2022
--- License     :  see LICENSE
+-- License     :  ISC, see LICENSE
 --
 -- Maintainer  :  jacobleach@protonmail.com
 -- Stability   :  stable
 -- Portability :  non-portable (GHC extensions)
 --
--- TODO
+-- This file contains the orphan instances re-exported by "Data.Int.Prim". 
 --
 -- @since 1.0.0
 module Data.Int.Prim.Orphans () where
@@ -27,12 +26,11 @@ import Language.Haskell.TH.Syntax
     unsafeCodeCoerce,
   )
 
---------------------------------------------------------------------------------
+-- Int8# - Orphan Instances ----------------------------------------------------
 
--- |
--- __Orphan:__ defined in "Data.Int.Orphans" since prim-int-1.0.0.
+-- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
--- @since prim-int-1.0.0
+-- @since 1.0.0
 instance Lift Int8# where
   lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I8# x)))))
   {-# INLINE lift #-}
@@ -40,10 +38,11 @@ instance Lift Int8# where
   liftTyped x = unsafeCodeCoerce (lift x)
   {-# INLINE liftTyped #-}
 
--- |
--- __Orphan:__ defined in "Data.Int.Orphans" since prim-int-1.0.0.
+-- Int16# - Orphan Instances ---------------------------------------------------
+
+-- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
--- @since prim-int-1.0.0
+-- @since 1.0.0
 instance Lift Int16# where
   lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I16# x)))))
   {-# INLINE lift #-}
@@ -51,10 +50,11 @@ instance Lift Int16# where
   liftTyped x = unsafeCodeCoerce (lift x)
   {-# INLINE liftTyped #-}
 
--- |
--- __Orphan:__ defined in "Data.Int.Orphans" since prim-int-1.0.0.
+-- Int32# - Orphan Instances ---------------------------------------------------
+
+-- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
--- @since prim-int-1.0.0
+-- @since 1.0.0
 instance Lift Int32# where
   lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I32# x)))))
   {-# INLINE lift #-}

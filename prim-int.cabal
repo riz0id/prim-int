@@ -1,17 +1,18 @@
 cabal-version: 2.4
 
-name:         prim-int
-category:     Data
-version:      1.0.0
-synopsis:     Facilities for working with unlifted integers.
-description:  Facilities for working with unlifted integers.
-license:      BSD-3-Clause
+name:        prim-int
+category:    Data
+version:     1.0.0
+synopsis:    Facilities for working with unlifted integers.
+description: Facilities for working with unlifted integers.
+
+author:       jake
+maintainer:   jacobleach@protonmail.com
+copyright:    2022, Jacob Leach
+homepage:     https://github.com/riz0id/prim-int
+license:      ISC
 license-file: LICENSE
 build-type:   Simple
-
-author:     jake
-maintainer: jacobleach@protonmail.com
-copyright:  2022, Jacob Leach
 
 extra-source-files:
   CHANGELOG.md
@@ -20,27 +21,31 @@ extra-source-files:
 tested-with:
   GHC == 9.2.2
 
-source-repository head
-  type:     git
-  location: https://github.com/riz0id/prim-int
+flag llvm
+  Description: Compile using the LLVM backend.
+  Default:     False
+  Manual:      True
 
 common common
   default-language: Haskell2010
 
   ghc-options:
+    -- Warnings & Sanity checking
     -Wall
     -Wcompat
-    -Wmissing-import-lists
-    -Wincomplete-record-updates
-    -Wincomplete-uni-patterns
-    -Wredundant-constraints
+    -Wcpp-undef
+    -Werror
     -Widentities
-    -Wredundant-constraints
-    -Wpartial-fields
-    -Wunused-packages
+    -Wmissing-export-lists
+
+    -- Optimization
+    -O2
+    -fregs-iterative
+    -fmax-simplifier-iterations=20
 
   build-depends:
-    , base
+    , base      >= 4.16.1 && < 4.17
+    , prim-bool >= 1.0.0  && < 1.1.0
 
 library
   import:         common
@@ -49,13 +54,42 @@ library
   default-extensions: 
     MagicHash
 
+  if flag(llvm) 
+    ghc-options: -fllvm 
+
   build-depends:
-    , ghc-prim >= 0.8.0
-    , unlifted-bool >= 1.1.1
-    , template-haskell
+    , ghc-prim         >= 0.8.0  && < 0.9
+    , template-haskell >= 2.18.0 && < 2.19
 
   exposed-modules:
     Data.Int.Prim
 
   other-modules:
     Data.Int.Prim.Orphans
+
+test-suite test
+  import:         common
+  type:           exitcode-stdio-1.0
+  hs-source-dirs: test
+  main-is:        Test.hs
+
+  ghc-options:
+    -threaded
+    -rtsopts
+    "-with-rtsopts=-N"
+
+  build-depends:
+    , hedgehog
+    , prim-int
+    , tasty
+    , tasty-hedgehog 
+
+  other-modules:
+    Test.Int
+    Test.Int8
+    Test.Int16
+    Test.Int32
+
+source-repository head
+  type:     git
+  location: https://github.com/riz0id/prim-int

@@ -9,7 +9,7 @@ let
         "${ghc}" = super.haskell.packages."${ghc}".override (old: {
           overrides = let
             sources = self.haskell.lib.packageSourceOverrides {
-              unlifted-bool = import nix/pkgs/unlifted-bool.nix { };
+              prim-bool = import nix/pkgs/prim-bool.nix { };
               prim-int = ./.;
             };
 

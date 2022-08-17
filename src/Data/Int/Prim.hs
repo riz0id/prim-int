@@ -3,7 +3,7 @@
 -- |
 -- Module      :  Data.Int.Prim
 -- Copyright   :  (c) Jacob Leach, 2022
--- License     :  see LICENSE
+-- License     :  ISC, see LICENSE
 --
 -- Maintainer  :  jacobleach@protonmail.com
 -- Stability   :  stable
@@ -32,6 +32,9 @@ module Data.Int.Prim
     subInt#,
     mulInt#,
     divInt#,
+    negateInt#,
+    absInt#,
+    signumInt#,
 
     -- ** Comparison #int-comparison#
     -- $section-int-comparison
@@ -53,6 +56,9 @@ module Data.Int.Prim
     addInt8#,
     subInt8#,
     mulInt8#,
+    negateInt8#,
+    absInt8#,
+    signumInt8#,
 
     -- ** Comparison #int8-comparison#
     -- $section-int8-comparison
@@ -74,6 +80,9 @@ module Data.Int.Prim
     addInt16#,
     subInt16#,
     mulInt16#,
+    negateInt16#,
+    absInt16#,
+    signumInt16#,
 
     -- ** Comparison #int16-comparison#
     -- $section-int16-comparison
@@ -95,6 +104,9 @@ module Data.Int.Prim
     addInt32#,
     subInt32#,
     mulInt32#,
+    negateInt32#,
+    absInt32#,
+    signumInt32#,
 
     -- ** Comparison #int32-comparison#
     -- $section-int32-comparison
@@ -107,7 +119,7 @@ module Data.Int.Prim
   )
 where
 
-import Data.Bool.Unlifted (Bool#)
+import Data.Bool.Prim (Bool#)
 
 import qualified GHC.Classes as Prim (divInt#)
 import GHC.Exts (unsafeCoerce#)
@@ -181,6 +193,28 @@ mulInt# a b = a Prim.*# b
 divInt# :: Int# -> Int# -> Int#
 divInt# a b = Prim.divInt# a b
 
+-- | Unary negation of an 'Int#' value.
+--
+-- @since 1.0.0
+negateInt# :: Int# -> Int#
+negateInt# = Prim.negateInt#
+
+-- | Take the absolute value of an 'Int#'.
+--
+-- @since 1.0.0
+absInt# :: Int# -> Int#
+absInt# x =
+  let tmp0 = Prim.uncheckedIShiftRL# x 31#
+      tmp1 = Prim.andI# tmp0 1#
+   in (Prim.xorI# x tmp0) Prim.+# tmp1
+
+-- | Take the sign of an 'Int#' value resulting in either -1 (negative), 
+-- 0 (zero) or 1 (positive).
+--
+-- @since 1.0.0
+signumInt# :: Int# -> Int#
+signumInt# x = (0# Prim.<# x) Prim.-# (x Prim.<# 0#)
+
 -- Int# - Comparison -----------------------------------------------------------
 
 -- $section-int-comparison
@@ -188,18 +222,6 @@ divInt# a b = Prim.divInt# a b
 -- Primitive 'Int#' comparisons.
 
 infix 4 `gtInt#`, `geInt#`, `eqInt#`, `neInt#`, `ltInt#`, `leInt#`
-
--- | "Equal to" comparison on two 'Int#' values.
---
--- @since 1.0.0
-eqInt# :: Int# -> Int# -> Bool#
-eqInt# a b = unsafeCoerce# (a Prim.==# b)
-
--- | "Not equal to" comparison on two 'Int#' values.
---
--- @since 1.0.0
-neInt# :: Int# -> Int# -> Bool#
-neInt# a b = unsafeCoerce# (a Prim./=# b)
 
 -- | "Greater than" comparison on two 'Int#' values.
 --
@@ -212,6 +234,18 @@ gtInt# a b = unsafeCoerce# (a Prim.># b)
 -- @since 1.0.0
 geInt# :: Int# -> Int# -> Bool#
 geInt# a b = unsafeCoerce# (a Prim.>=# b)
+
+-- | "Equal to" comparison on two 'Int#' values.
+--
+-- @since 1.0.0
+eqInt# :: Int# -> Int# -> Bool#
+eqInt# a b = unsafeCoerce# (a Prim.==# b)
+
+-- | "Not equal to" comparison on two 'Int#' values.
+--
+-- @since 1.0.0
+neInt# :: Int# -> Int# -> Bool#
+neInt# a b = unsafeCoerce# (a Prim./=# b)
 
 -- | "Less than" comparison on two 'Int#' values.
 --
@@ -278,6 +312,28 @@ subInt8# a b = Prim.subInt8# a b
 -- @since 1.0.0
 mulInt8# :: Int8# -> Int8# -> Int8#
 mulInt8# a b = Prim.timesInt8# a b
+
+-- | Unary negation of an 'Int8#' value.
+--
+-- @since 1.0.0
+negateInt8# :: Int8# -> Int8#
+negateInt8# = Prim.negateInt8#
+
+-- | Take the absolute value of an 'Int8#'.
+--
+-- @since 1.0.0
+absInt8# :: Int8# -> Int8#
+absInt8# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
+
+-- | Take the sign of an 'Int8#' value resulting in either -1 (negative), 
+-- 0 (zero) or 1 (positive).
+--
+-- @since 1.0.0
+signumInt8# :: Int8# -> Int#
+signumInt8# x = 
+  let cmp0 = Prim.ltInt8# (unsafeCoerce# 0#) x
+      cmp1 = Prim.ltInt8# x (unsafeCoerce# 0#)
+   in cmp0 Prim.-# cmp1
 
 -- Int8# - Comparison ----------------------------------------------------------
 
@@ -377,6 +433,28 @@ subInt16# a b = Prim.subInt16# a b
 mulInt16# :: Int16# -> Int16# -> Int16#
 mulInt16# a b = Prim.timesInt16# a b
 
+-- | Unary negation of an 'Int16#' value.
+--
+-- @since 1.0.0
+negateInt16# :: Int16# -> Int16#
+negateInt16# = Prim.negateInt16#
+
+-- | Take the absolute value of an 'Int16#'.
+--
+-- @since 1.0.0
+absInt16# :: Int16# -> Int16#
+absInt16# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
+
+-- | Take the sign of an 'Int16#' value resulting in either -1 (negative), 
+-- 0 (zero) or 1 (positive).
+--
+-- @since 1.0.0
+signumInt16# :: Int16# -> Int#
+signumInt16# x = 
+  let cmp0 = Prim.ltInt16# (unsafeCoerce# 0#) x
+      cmp1 = Prim.ltInt16# x (unsafeCoerce# 0#)
+   in cmp0 Prim.-# cmp1
+
 -- Int16# - Comparison ---------------------------------------------------------
 
 -- $section-int16-comparison
@@ -474,6 +552,28 @@ subInt32# a b = Prim.subInt32# a b
 -- @since 1.0.0
 mulInt32# :: Int32# -> Int32# -> Int32#
 mulInt32# a b = Prim.timesInt32# a b
+
+-- | Unary negation of an 'Int32#' value.
+--
+-- @since 1.0.0
+negateInt32# :: Int32# -> Int32#
+negateInt32# = Prim.negateInt32#
+
+-- | Take the absolute value of an 'Int32#'.
+--
+-- @since 1.0.0
+absInt32# :: Int32# -> Int32#
+absInt32# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
+
+-- | Take the sign of an 'Int32#' value resulting in either -1 (negative), 
+-- 0 (zero) or 1 (positive).
+--
+-- @since 1.0.0
+signumInt32# :: Int32# -> Int#
+signumInt32# x = 
+  let cmp0 = Prim.ltInt32# (unsafeCoerce# 0#) x
+      cmp1 = Prim.ltInt32# x (unsafeCoerce# 0#)
+   in cmp0 Prim.-# cmp1
 
 -- Int32# - Comparison ---------------------------------------------------------
 

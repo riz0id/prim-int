@@ -2,8 +2,8 @@
 
 let 
   pkg = "prim-bool";
-  rev = "1.0.0";
+  rev = "1.0.1";
 in fetchTarball {
   url    = "https://github.com/riz0id/${pkg}/releases/download/${rev}/${pkg}.tar.gz";
-  sha256 = "1gc37gm56ishra5hpgqn5kpqmawxzq5amfhrvczds2m0pw8sk4cj";
+  sha256 = "0xbxf29h5ych51dha0r58k6lwa3j42bwjwvcwq7chxmwm2yg9s6x";
 }

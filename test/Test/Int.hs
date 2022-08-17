@@ -1,17 +1,20 @@
 {-# LANGUAGE MagicHash #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Test.Int (testTree) where
+
+import Data.Bool.Prim (Bool#, toBool#)
+import Data.Int.Prim
+
+import GHC.Int (Int (I#))
 
 import Hedgehog (Property, forAll, property, (===))
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
-import Test.Tasty (TestTree, testGroup)
-import Test.Tasty.Hedgehog (testPropertyNamed)
 
-import Data.Bool.Unlifted (Bool#, toBool#)
-import Data.Int.Prim
-import GHC.Int (Int (I#))
+import Test.Tasty (TestTree, testGroup)
+import Test.Compat (prop)
 
 --------------------------------------------------------------------------------
 
@@ -21,29 +24,29 @@ testTree =
     "Int"
     [ testGroup
         "Arithmetic"
-        [ testPropertyNamed "addInt#" "addInt#" $ arithmetic addInt# (+)
-        , testPropertyNamed "subInt#" "subInt#" $ arithmetic subInt# (-)
-        , testPropertyNamed "mulInt#" "mulInt#" $ arithmetic mulInt# (*)
+        [ prop "addInt#" $ arithmetic addInt# (+)
+        , prop "subInt#" $ arithmetic subInt# (-)
+        , prop "mulInt#" $ arithmetic mulInt# (*)
         ]
     , testGroup
         "Comparison"
-        [ testPropertyNamed "gtInt#" "gtInt#" $ comparison gtInt# (>)
-        , testPropertyNamed "geInt#" "geInt#" $ comparison geInt# (>=)
-        , testPropertyNamed "eqInt#" "eqInt#" $ comparison eqInt# (==)
-        , testPropertyNamed "neInt#" "neInt#" $ comparison neInt# (/=)
-        , testPropertyNamed "ltInt#" "ltInt#" $ comparison ltInt# (<)
-        , testPropertyNamed "leInt#" "leInt#" $ comparison leInt# (<=)
+        [ prop "gtInt#" $ comparison gtInt# (>)
+        , prop "geInt#" $ comparison geInt# (>=)
+        , prop "eqInt#" $ comparison eqInt# (==)
+        , prop "neInt#" $ comparison neInt# (/=)
+        , prop "ltInt#" $ comparison ltInt# (<)
+        , prop "leInt#" $ comparison leInt# (<=)
         ]
     ]
 
 arithmetic :: (Int# -> Int# -> Int#) -> (Int -> Int -> Int) -> Property
 arithmetic op# op = property $ do
-  x@(I# x#) <- forAll (Gen.int Range.constantBounded)
-  y@(I# y#) <- forAll (Gen.int Range.constantBounded)
+  x@(toInt# -> x#) <- forAll (Gen.int Range.constantBounded)
+  y@(toInt# -> y#) <- forAll (Gen.int Range.constantBounded)
   op x y === I# (op# x# y#)
 
 comparison :: (Int# -> Int# -> Bool#) -> (Int -> Int -> Bool) -> Property
 comparison op# op = property $ do
-  x@(I# x#) <- forAll (Gen.int Range.constantBounded)
-  y@(I# y#) <- forAll (Gen.int Range.constantBounded)
+  x@(toInt# -> x#) <- forAll (Gen.int Range.constantBounded)
+  y@(toInt# -> y#) <- forAll (Gen.int Range.constantBounded)
   op x y === toBool# (op# x# y#)

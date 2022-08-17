@@ -23,7 +23,8 @@ module Data.Int.Prim
   ( -- * Int# #int#
     -- $section-int
     Int#,
-    getInt#,
+    fromInt#,
+    toInt#,
     showInt#,
 
     -- ** Arithmetic #int-arithmetic#
@@ -48,7 +49,8 @@ module Data.Int.Prim
     -- * Int8# #int8#
     -- $section-int8
     Int8#,
-    getInt8#,
+    fromInt8#,
+    toInt8#,
     showInt8#,
 
     -- ** Arithmetic #int8-arithmetic#
@@ -72,7 +74,8 @@ module Data.Int.Prim
     -- * Int16# #int16#
     -- $section-int16
     Int16#,
-    getInt16#,
+    fromInt16#,
+    toInt16#,
     showInt16#,
 
     -- ** Arithmetic #int16-arithmetic#
@@ -93,10 +96,13 @@ module Data.Int.Prim
     ltInt16#,
     leInt16#,
 
+#if (MIN_VERSION_ghc_prim(0,8,0))
+
     -- * Int32# #int32#
     -- $section-int32
     Int32#,
-    getInt32#,
+    fromInt32#,
+    toInt32#,
     showInt32#,
 
     -- ** Arithmetic #int32-arithmetic#
@@ -116,6 +122,8 @@ module Data.Int.Prim
     geInt32#,
     ltInt32#,
     leInt32#,
+
+#endif
   )
 where
 
@@ -123,9 +131,19 @@ import Data.Bool.Prim (Bool#)
 
 import qualified GHC.Classes as Prim (divInt#)
 import GHC.Exts (unsafeCoerce#)
+import qualified GHC.Prim as Prim
+
+#if (MIN_VERSION_ghc_prim(0,8,0))
+
 import GHC.Int (Int (I#), Int16 (I16#), Int32 (I32#), Int8 (I8#))
 import GHC.Prim (Int#, Int16#, Int32#, Int8#)
-import qualified GHC.Prim as Prim
+
+#else
+
+import GHC.Int (Int (I#), Int16 (I16#), Int8 (I8#))
+import GHC.Prim (Int#, Int16#, Int8#)
+
+#endif
 
 --------------------------------------------------------------------------------
 
@@ -137,11 +155,17 @@ import Data.Int.Prim.Orphans ()
 --
 -- TODO
 
--- | Unbox an 'Int' value.
+-- | Convert a unboxed 'Int#' value to a boxed 'Int' value.
 --
 -- @since 1.0.0
-getInt# :: Int -> Int#
-getInt# (I# x) = x
+fromInt# :: Int# -> Int
+fromInt# x = I# x
+
+-- | Convert a boxed 'Int' value to an unboxed 'Int#' value.
+--
+-- @since 1.0.0
+toInt# :: Int -> Int#
+toInt# (I# x) = x
 
 -- | Display an 'Int#' value as a 'String'.
 --
@@ -265,11 +289,35 @@ leInt# a b = unsafeCoerce# (a Prim.<=# b)
 --
 -- TODO
 
--- | Unbox an 'Int8' value.
+#if MIN_VERSION_ghc_prim(0,8,0)
+
+-- | Convert a unboxed 'Int8#' value to a boxed 'Int8' value.
 --
 -- @since 1.0.0
-getInt8# :: Int8 -> Int8#
-getInt8# (I8# x) = x
+fromInt8# :: Int8# -> Int8
+fromInt8# x = I8# x
+
+-- | Convert a boxed 'Int8' value to an unboxed 'Int8#' value.
+--
+-- @since 1.0.0
+toInt8# :: Int8 -> Int8#
+toInt8# (I8# x) = x
+
+#else
+
+-- | Convert a unboxed 'Int8#' value to a boxed 'Int8' value.
+--
+-- @since 1.0.0
+fromInt8# :: Int8# -> Int8
+fromInt8# x = I8# (Prim.extendInt8# x)
+
+-- | Convert a boxed 'Int8' value to an unboxed 'Int8#' value.
+--
+-- @since 1.0.0
+toInt8# :: Int8 -> Int8#
+toInt8# (I8# x) = Prim.narrowInt8# x
+
+#endif
 
 -- | Display an 'Int8#' value as a 'String'.
 --
@@ -278,7 +326,7 @@ getInt8# (I8# x) = x
 --
 -- @since 1.0.0
 showInt8# :: Int8# -> String
-showInt8# x = shows (I8# x) "#"
+showInt8# x = shows (fromInt8# x) "#"
 
 -- Int8# - Arithmetic ----------------------------------------------------------
 
@@ -385,11 +433,35 @@ leInt8# a b = unsafeCoerce# (Prim.leInt8# a b)
 --
 -- TODO
 
--- | Unbox an 'Int16' value.
+#if MIN_VERSION_ghc_prim(0,8,0)
+
+-- | Convert a unboxed 'Int16#' value to a boxed 'Int16' value.
 --
 -- @since 1.0.0
-getInt16# :: Int16 -> Int16#
-getInt16# (I16# x) = x
+fromInt16# :: Int16# -> Int16
+fromInt16# x = I16# x
+
+-- | Convert a boxed 'Int16' value to an unboxed 'Int16#' value.
+--
+-- @since 1.0.0
+toInt16# :: Int16 -> Int16#
+toInt16# (I16# x) = x
+
+#else
+
+-- | Convert a unboxed 'Int16#' value to a boxed 'Int16' value.
+--
+-- @since 1.0.0
+fromInt16# :: Int16# -> Int16
+fromInt16# x = I16# (Prim.extendInt16# x)
+
+-- | Convert a boxed 'Int16' value to an unboxed 'Int16#' value.
+--
+-- @since 1.0.0
+toInt16# :: Int16 -> Int16#
+toInt16# (I16# x) = Prim.narrowInt16# x
+
+#endif
 
 -- | Display an 'Int16#' value as a 'String'.
 --
@@ -398,7 +470,7 @@ getInt16# (I16# x) = x
 --
 -- @since 1.0.0
 showInt16# :: Int16# -> String
-showInt16# x = shows (I16# x) "#"
+showInt16# x = shows (fromInt16# x) "#"
 
 -- Int16# - Arithmetic ---------------------------------------------------------
 
@@ -499,17 +571,25 @@ ltInt16# a b = unsafeCoerce# (Prim.ltInt16# a b)
 leInt16# :: Int16# -> Int16# -> Bool#
 leInt16# a b = unsafeCoerce# (Prim.leInt16# a b)
 
+#if (MIN_VERSION_ghc_prim(0,8,0))
+
 -- Int32# ----------------------------------------------------------------------
 
 -- $section-int32 #section-int32#
 --
 -- TODO
 
--- | Unbox an 'Int32' value.
+-- | Convert a unboxed 'Int32#' value to a boxed 'Int32' value.
 --
 -- @since 1.0.0
-getInt32# :: Int32 -> Int32#
-getInt32# (I32# x) = x
+fromInt32# :: Int32# -> Int32
+fromInt32# x = I32# x
+
+-- | Convert a boxed 'Int32' value to an unboxed 'Int32#' value.
+--
+-- @since 1.0.0
+toInt32# :: Int32 -> Int32#
+toInt32# (I32# x) = x
 
 -- | Display an 'Int32#' value as a 'String'.
 --
@@ -518,7 +598,7 @@ getInt32# (I32# x) = x
 --
 -- @since 1.0.0
 showInt32# :: Int32# -> String
-showInt32# x = shows (I32# x) "#"
+showInt32# x = shows (fromInt32# x) "#"
 
 -- Int32# - Arithmetic ---------------------------------------------------------
 
@@ -618,3 +698,5 @@ ltInt32# a b = unsafeCoerce# (Prim.ltInt32# a b)
 -- @since 1.0.0
 leInt32# :: Int32# -> Int32# -> Bool#
 leInt32# a b = unsafeCoerce# (Prim.leInt32# a b)
+
+#endif

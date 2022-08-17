@@ -16,8 +16,19 @@
 module Data.Int.Prim.Orphans () where
 
 import GHC.Exts (unsafeCoerce#)
+
+#if (MIN_VERSION_ghc_prim(0,8,0))
+
 import GHC.Int (Int16 (I16#), Int32 (I32#), Int8 (I8#))
 import GHC.Prim (Int16#, Int32#, Int8#)
+
+#else
+
+import GHC.Int (Int (I#))
+import GHC.Prim (Int16#, Int8#)
+import qualified GHC.Prim as Prim 
+
+#endif 
 
 import Language.Haskell.TH.Syntax
   ( Exp (AppE, LitE, VarE),
@@ -26,17 +37,26 @@ import Language.Haskell.TH.Syntax
     unsafeCodeCoerce,
   )
 
+--------------------------------------------------------------------------------
+
 -- Int8# - Orphan Instances ----------------------------------------------------
 
 -- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
 -- @since 1.0.0
 instance Lift Int8# where
+
+#if (MIN_VERSION_ghc_prim(0,8,0))
+
   lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I8# x)))))
-  {-# INLINE lift #-}
+
+#else
+
+  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I# (Prim.extendInt8# x))))))
+
+#endif
 
   liftTyped x = unsafeCodeCoerce (lift x)
-  {-# INLINE liftTyped #-}
 
 -- Int16# - Orphan Instances ---------------------------------------------------
 
@@ -44,20 +64,29 @@ instance Lift Int8# where
 --
 -- @since 1.0.0
 instance Lift Int16# where
+
+#if (MIN_VERSION_ghc_prim(0,8,0))
+
   lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I16# x)))))
-  {-# INLINE lift #-}
+
+#else
+
+  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I# (Prim.extendInt16# x))))))
+
+#endif
 
   liftTyped x = unsafeCodeCoerce (lift x)
-  {-# INLINE liftTyped #-}
 
 -- Int32# - Orphan Instances ---------------------------------------------------
+
+#if (MIN_VERSION_ghc_prim(0,8,0))
 
 -- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
 -- @since 1.0.0
 instance Lift Int32# where
   lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I32# x)))))
-  {-# INLINE lift #-}
 
   liftTyped x = unsafeCodeCoerce (lift x)
-  {-# INLINE liftTyped #-}
+
+#endif

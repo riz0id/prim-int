@@ -1,4 +1,4 @@
-{ ghc ? "ghc922" }:
+{ ghc ? "ghc902" }:
 
 let
   nixpkgs = import nix/nixpkgs.nix { };
@@ -9,8 +9,9 @@ let
         "${ghc}" = super.haskell.packages."${ghc}".override (old: {
           overrides = let
             sources = self.haskell.lib.packageSourceOverrides {
-              prim-bool = import nix/pkgs/prim-bool.nix { };
-              prim-int = ./.;
+              prim-bool   = import nix/pkgs/prim-bool.nix { };
+              prim-compat = import nix/pkgs/prim-compat.nix { };
+              prim-int    = ./.;
             };
 
             default = old.overrides or (_: _: { });
@@ -27,5 +28,5 @@ let
 
 in {
   inherit (pkgs.haskell.packages."${ghc}") prim-int;
-  inherit (pkgs) cabal-install clang llvm;
+  inherit (pkgs) cabal-install clang haskell-language-server llvm;
 }

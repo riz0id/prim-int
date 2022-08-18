@@ -45,9 +45,10 @@ common common
     -fmax-simplifier-iterations=20
 
   build-depends:
-    , base      >= 4.15.1 && < 4.17
-    , prim-bool >= 1.0.1  && < 1.1.0
-    , ghc-prim  >= 0.7.0  && < 0.9
+    , base        >= 4.15.1 && < 4.17
+    , prim-bool   >= 1.0.1  && < 1.1.0
+    , prim-compat >= 1.0.0 && < 1.1.0
+    , ghc-prim    >= 0.7.0  && < 0.9
 
 library
   import:         common
@@ -81,6 +82,7 @@ test-suite test
 
   build-depends:
     , hedgehog
+    , prim-compat
     , prim-int
     , tasty
     , tasty-hedgehog 

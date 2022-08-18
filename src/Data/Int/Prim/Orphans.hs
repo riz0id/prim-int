@@ -15,20 +15,10 @@
 -- @since 1.0.0
 module Data.Int.Prim.Orphans () where
 
+import Data.Int.Prim.Compat (fromInt8#, fromInt16#, fromInt32#)
+
 import GHC.Exts (unsafeCoerce#)
-
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
-import GHC.Int (Int16 (I16#), Int32 (I32#), Int8 (I8#))
-import GHC.Prim (Int16#, Int32#, Int8#)
-
-#else
-
-import GHC.Int (Int (I#))
-import GHC.Prim (Int16#, Int8#)
-import qualified GHC.Prim as Prim 
-
-#endif 
+import GHC.Prim (Int32#, Int16#, Int8#)
 
 import Language.Haskell.TH.Syntax
   ( Exp (AppE, LitE, VarE),
@@ -37,24 +27,13 @@ import Language.Haskell.TH.Syntax
     unsafeCodeCoerce,
   )
 
---------------------------------------------------------------------------------
-
 -- Int8# - Orphan Instances ----------------------------------------------------
 
 -- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
 -- @since 1.0.0
 instance Lift Int8# where
-
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
-  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I8# x)))))
-
-#else
-
-  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I# (Prim.extendInt8# x))))))
-
-#endif
+  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (fromInt8# x)))))
 
   liftTyped x = unsafeCodeCoerce (lift x)
 
@@ -64,29 +43,16 @@ instance Lift Int8# where
 --
 -- @since 1.0.0
 instance Lift Int16# where
-
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
-  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I16# x)))))
-
-#else
-
-  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I# (Prim.extendInt16# x))))))
-
-#endif
+  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (fromInt16# x)))))
 
   liftTyped x = unsafeCodeCoerce (lift x)
 
 -- Int32# - Orphan Instances ---------------------------------------------------
 
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
 -- | /Orphan defined in "Data.Int" since @prim-int-1.0.0@./
 --
 -- @since 1.0.0
 instance Lift Int32# where
-  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (I32# x)))))
+  lift x = pure (AppE (VarE 'unsafeCoerce#) (LitE (IntPrimL (fromIntegral (fromInt32# x)))))
 
   liftTyped x = unsafeCodeCoerce (lift x)
-
-#endif

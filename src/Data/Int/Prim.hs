@@ -96,8 +96,6 @@ module Data.Int.Prim
     ltInt16#,
     leInt16#,
 
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
     -- * Int32# #int32#
     -- $section-int32
     Int32#,
@@ -122,8 +120,6 @@ module Data.Int.Prim
     geInt32#,
     ltInt32#,
     leInt32#,
-
-#endif
   )
 where
 
@@ -133,20 +129,21 @@ import qualified GHC.Classes as Prim (divInt#)
 import GHC.Exts (unsafeCoerce#)
 import qualified GHC.Prim as Prim
 
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
-import GHC.Int (Int (I#), Int16 (I16#), Int32 (I32#), Int8 (I8#))
+import GHC.Int (Int (I#))
 import GHC.Prim (Int#, Int16#, Int32#, Int8#)
-
-#else
-
-import GHC.Int (Int (I#), Int16 (I16#), Int8 (I8#))
-import GHC.Prim (Int#, Int16#, Int8#)
-
-#endif
 
 --------------------------------------------------------------------------------
 
+import Data.Int.Prim.Compat
+  ( fromInt#,
+    fromInt16#,
+    fromInt32#,
+    fromInt8#,
+    toInt#,
+    toInt16#,
+    toInt32#,
+    toInt8#,
+  )
 import Data.Int.Prim.Orphans ()
 
 -- Int# ------------------------------------------------------------------------
@@ -154,18 +151,6 @@ import Data.Int.Prim.Orphans ()
 -- $section-int #section-int#
 --
 -- TODO
-
--- | Convert a unboxed 'Int#' value to a boxed 'Int' value.
---
--- @since 1.0.0
-fromInt# :: Int# -> Int
-fromInt# x = I# x
-
--- | Convert a boxed 'Int' value to an unboxed 'Int#' value.
---
--- @since 1.0.0
-toInt# :: Int -> Int#
-toInt# (I# x) = x
 
 -- | Display an 'Int#' value as a 'String'.
 --
@@ -215,7 +200,7 @@ mulInt# a b = a Prim.*# b
 --
 -- @since 1.0.0
 divInt# :: Int# -> Int# -> Int#
-divInt# a b = Prim.divInt# a b
+divInt# = Prim.divInt#
 
 -- | Unary negation of an 'Int#' value.
 --
@@ -232,7 +217,7 @@ absInt# x =
       tmp1 = Prim.andI# tmp0 1#
    in (Prim.xorI# x tmp0) Prim.+# tmp1
 
--- | Take the sign of an 'Int#' value resulting in either -1 (negative), 
+-- | Take the sign of an 'Int#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
 --
 -- @since 1.0.0
@@ -289,36 +274,6 @@ leInt# a b = unsafeCoerce# (a Prim.<=# b)
 --
 -- TODO
 
-#if MIN_VERSION_ghc_prim(0,8,0)
-
--- | Convert a unboxed 'Int8#' value to a boxed 'Int8' value.
---
--- @since 1.0.0
-fromInt8# :: Int8# -> Int8
-fromInt8# x = I8# x
-
--- | Convert a boxed 'Int8' value to an unboxed 'Int8#' value.
---
--- @since 1.0.0
-toInt8# :: Int8 -> Int8#
-toInt8# (I8# x) = x
-
-#else
-
--- | Convert a unboxed 'Int8#' value to a boxed 'Int8' value.
---
--- @since 1.0.0
-fromInt8# :: Int8# -> Int8
-fromInt8# x = I8# (Prim.extendInt8# x)
-
--- | Convert a boxed 'Int8' value to an unboxed 'Int8#' value.
---
--- @since 1.0.0
-toInt8# :: Int8 -> Int8#
-toInt8# (I8# x) = Prim.narrowInt8# x
-
-#endif
-
 -- | Display an 'Int8#' value as a 'String'.
 --
 -- >>> showInt8# (intToInt8# 12345#)
@@ -373,12 +328,12 @@ negateInt8# = Prim.negateInt8#
 absInt8# :: Int8# -> Int8#
 absInt8# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
 
--- | Take the sign of an 'Int8#' value resulting in either -1 (negative), 
+-- | Take the sign of an 'Int8#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
 --
 -- @since 1.0.0
 signumInt8# :: Int8# -> Int#
-signumInt8# x = 
+signumInt8# x =
   let cmp0 = Prim.ltInt8# (unsafeCoerce# 0#) x
       cmp1 = Prim.ltInt8# x (unsafeCoerce# 0#)
    in cmp0 Prim.-# cmp1
@@ -432,36 +387,6 @@ leInt8# a b = unsafeCoerce# (Prim.leInt8# a b)
 -- $section-int16 #section-int16#
 --
 -- TODO
-
-#if MIN_VERSION_ghc_prim(0,8,0)
-
--- | Convert a unboxed 'Int16#' value to a boxed 'Int16' value.
---
--- @since 1.0.0
-fromInt16# :: Int16# -> Int16
-fromInt16# x = I16# x
-
--- | Convert a boxed 'Int16' value to an unboxed 'Int16#' value.
---
--- @since 1.0.0
-toInt16# :: Int16 -> Int16#
-toInt16# (I16# x) = x
-
-#else
-
--- | Convert a unboxed 'Int16#' value to a boxed 'Int16' value.
---
--- @since 1.0.0
-fromInt16# :: Int16# -> Int16
-fromInt16# x = I16# (Prim.extendInt16# x)
-
--- | Convert a boxed 'Int16' value to an unboxed 'Int16#' value.
---
--- @since 1.0.0
-toInt16# :: Int16 -> Int16#
-toInt16# (I16# x) = Prim.narrowInt16# x
-
-#endif
 
 -- | Display an 'Int16#' value as a 'String'.
 --
@@ -517,12 +442,12 @@ negateInt16# = Prim.negateInt16#
 absInt16# :: Int16# -> Int16#
 absInt16# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
 
--- | Take the sign of an 'Int16#' value resulting in either -1 (negative), 
+-- | Take the sign of an 'Int16#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
 --
 -- @since 1.0.0
 signumInt16# :: Int16# -> Int#
-signumInt16# x = 
+signumInt16# x =
   let cmp0 = Prim.ltInt16# (unsafeCoerce# 0#) x
       cmp1 = Prim.ltInt16# x (unsafeCoerce# 0#)
    in cmp0 Prim.-# cmp1
@@ -571,25 +496,11 @@ ltInt16# a b = unsafeCoerce# (Prim.ltInt16# a b)
 leInt16# :: Int16# -> Int16# -> Bool#
 leInt16# a b = unsafeCoerce# (Prim.leInt16# a b)
 
-#if (MIN_VERSION_ghc_prim(0,8,0))
-
 -- Int32# ----------------------------------------------------------------------
 
 -- $section-int32 #section-int32#
 --
 -- TODO
-
--- | Convert a unboxed 'Int32#' value to a boxed 'Int32' value.
---
--- @since 1.0.0
-fromInt32# :: Int32# -> Int32
-fromInt32# x = I32# x
-
--- | Convert a boxed 'Int32' value to an unboxed 'Int32#' value.
---
--- @since 1.0.0
-toInt32# :: Int32 -> Int32#
-toInt32# (I32# x) = x
 
 -- | Display an 'Int32#' value as a 'String'.
 --
@@ -645,12 +556,12 @@ negateInt32# = Prim.negateInt32#
 absInt32# :: Int32# -> Int32#
 absInt32# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
 
--- | Take the sign of an 'Int32#' value resulting in either -1 (negative), 
+-- | Take the sign of an 'Int32#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
 --
 -- @since 1.0.0
 signumInt32# :: Int32# -> Int#
-signumInt32# x = 
+signumInt32# x =
   let cmp0 = Prim.ltInt32# (unsafeCoerce# 0#) x
       cmp1 = Prim.ltInt32# x (unsafeCoerce# 0#)
    in cmp0 Prim.-# cmp1
@@ -698,5 +609,3 @@ ltInt32# a b = unsafeCoerce# (Prim.ltInt32# a b)
 -- @since 1.0.0
 leInt32# :: Int32# -> Int32# -> Bool#
 leInt32# a b = unsafeCoerce# (Prim.leInt32# a b)
-
-#endif

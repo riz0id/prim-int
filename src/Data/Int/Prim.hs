@@ -1,3 +1,5 @@
+{-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE MagicHash #-}
 {-# OPTIONS_HADDOCK show-extensions #-}
 
 -- |
@@ -23,8 +25,8 @@ module Data.Int.Prim
   ( -- * Int# #int#
     -- $section-int
     Int#,
-    fromInt#,
-    toInt#,
+    Prim.Compat.fromInt,
+    Prim.Compat.toInt,
     showInt#,
 
     -- ** Arithmetic #int-arithmetic#
@@ -32,7 +34,6 @@ module Data.Int.Prim
     addInt#,
     subInt#,
     mulInt#,
-    divInt#,
     negateInt#,
     absInt#,
     signumInt#,
@@ -49,8 +50,8 @@ module Data.Int.Prim
     -- * Int8# #int8#
     -- $section-int8
     Int8#,
-    fromInt8#,
-    toInt8#,
+    Prim.Compat.intToInt8#,
+    Prim.Compat.int8ToInt#,
     showInt8#,
 
     -- ** Arithmetic #int8-arithmetic#
@@ -58,8 +59,7 @@ module Data.Int.Prim
     addInt8#,
     subInt8#,
     mulInt8#,
-    negateInt8#,
-    absInt8#,
+    negInt8#,
     signumInt8#,
 
     -- ** Comparison #int8-comparison#
@@ -74,8 +74,8 @@ module Data.Int.Prim
     -- * Int16# #int16#
     -- $section-int16
     Int16#,
-    fromInt16#,
-    toInt16#,
+    Prim.Compat.intToInt16#,
+    Prim.Compat.int16ToInt#,
     showInt16#,
 
     -- ** Arithmetic #int16-arithmetic#
@@ -83,8 +83,7 @@ module Data.Int.Prim
     addInt16#,
     subInt16#,
     mulInt16#,
-    negateInt16#,
-    absInt16#,
+    negInt16#,
     signumInt16#,
 
     -- ** Comparison #int16-comparison#
@@ -99,8 +98,8 @@ module Data.Int.Prim
     -- * Int32# #int32#
     -- $section-int32
     Int32#,
-    fromInt32#,
-    toInt32#,
+    Prim.Compat.int32ToInt#,
+    Prim.Compat.intToInt32#,
     showInt32#,
 
     -- ** Arithmetic #int32-arithmetic#
@@ -108,8 +107,7 @@ module Data.Int.Prim
     addInt32#,
     subInt32#,
     mulInt32#,
-    negateInt32#,
-    absInt32#,
+    negInt32#,
     signumInt32#,
 
     -- ** Comparison #int32-comparison#
@@ -124,26 +122,16 @@ module Data.Int.Prim
 where
 
 import Data.Bool.Prim (Bool#)
+import Data.Bool.Prim qualified as Bool
+import Data.Int.Prim.Compat qualified as Prim.Compat
 
-import qualified GHC.Classes as Prim (divInt#)
-import GHC.Exts (unsafeCoerce#)
-import qualified GHC.Prim as Prim
+import GHC.Exts (Int#, Int16#, Int32#, Int8#)
+import GHC.Exts qualified as GHC
 
 import GHC.Int (Int (I#))
-import GHC.Prim (Int#, Int16#, Int32#, Int8#)
 
 --------------------------------------------------------------------------------
 
-import Data.Int.Prim.Compat
-  ( fromInt#,
-    fromInt16#,
-    fromInt32#,
-    fromInt8#,
-    toInt#,
-    toInt16#,
-    toInt32#,
-    toInt8#,
-  )
 import Data.Int.Prim.Orphans ()
 
 -- Int# ------------------------------------------------------------------------
@@ -168,7 +156,7 @@ showInt# x = shows (I# x) "#"
 -- Primitive arithmetic operations on 'Int#'.
 
 infixl 6 `addInt#`, `subInt#`
-infixl 7 `mulInt#`, `divInt#`
+infixl 7 `mulInt#`
 
 -- | Addition of two 'Int#' values.
 --
@@ -176,7 +164,7 @@ infixl 7 `mulInt#`, `divInt#`
 --
 -- @since 1.0.0
 addInt# :: Int# -> Int# -> Int#
-addInt# a b = a Prim.+# b
+addInt# = (GHC.+#)
 
 -- | Subtraction of two 'Int#' values.
 --
@@ -184,7 +172,7 @@ addInt# a b = a Prim.+# b
 --
 -- @since 1.0.0
 subInt# :: Int# -> Int# -> Int#
-subInt# a b = a Prim.-# b
+subInt# = (GHC.-#)
 
 -- | Multiplication of two 'Int#' values.
 --
@@ -192,37 +180,29 @@ subInt# a b = a Prim.-# b
 --
 -- @since 1.0.0
 mulInt# :: Int# -> Int# -> Int#
-mulInt# a b = a Prim.*# b
-
--- | Division of two 'Int#' values, rounded towards negative infinity.
---
--- __NOTE:__ This will fail with an unchecked exception if the divisor is zero.
---
--- @since 1.0.0
-divInt# :: Int# -> Int# -> Int#
-divInt# = Prim.divInt#
+mulInt# = (GHC.*#)
 
 -- | Unary negation of an 'Int#' value.
 --
 -- @since 1.0.0
 negateInt# :: Int# -> Int#
-negateInt# = Prim.negateInt#
+negateInt# = GHC.negateInt#
 
 -- | Take the absolute value of an 'Int#'.
 --
 -- @since 1.0.0
 absInt# :: Int# -> Int#
 absInt# x =
-  let tmp0 = Prim.uncheckedIShiftRL# x 31#
-      tmp1 = Prim.andI# tmp0 1#
-   in (Prim.xorI# x tmp0) Prim.+# tmp1
+  let tmp0 = GHC.uncheckedIShiftRL# x 31#
+      tmp1 = GHC.andI# tmp0 1#
+   in GHC.xorI# x tmp0 GHC.+# tmp1
 
 -- | Take the sign of an 'Int#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
 --
 -- @since 1.0.0
 signumInt# :: Int# -> Int#
-signumInt# x = (0# Prim.<# x) Prim.-# (x Prim.<# 0#)
+signumInt# x = (0# GHC.<# x) GHC.-# (x GHC.<# 0#)
 
 -- Int# - Comparison -----------------------------------------------------------
 
@@ -236,37 +216,37 @@ infix 4 `gtInt#`, `geInt#`, `eqInt#`, `neInt#`, `ltInt#`, `leInt#`
 --
 -- @since 1.0.0
 gtInt# :: Int# -> Int# -> Bool#
-gtInt# a b = unsafeCoerce# (a Prim.># b)
+gtInt# a b = Bool.fromInt# (a GHC.># b)
 
 -- | "Greater than or equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 geInt# :: Int# -> Int# -> Bool#
-geInt# a b = unsafeCoerce# (a Prim.>=# b)
+geInt# a b = Bool.fromInt# (a GHC.>=# b)
 
 -- | "Equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 eqInt# :: Int# -> Int# -> Bool#
-eqInt# a b = unsafeCoerce# (a Prim.==# b)
+eqInt# a b = Bool.fromInt# (a GHC.==# b)
 
 -- | "Not equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 neInt# :: Int# -> Int# -> Bool#
-neInt# a b = unsafeCoerce# (a Prim./=# b)
+neInt# a b = Bool.fromInt# (a GHC./=# b)
 
 -- | "Less than" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 ltInt# :: Int# -> Int# -> Bool#
-ltInt# a b = unsafeCoerce# (a Prim.<# b)
+ltInt# a b = Bool.fromInt# (a GHC.<# b)
 
 -- | "Less than or equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 leInt# :: Int# -> Int# -> Bool#
-leInt# a b = unsafeCoerce# (a Prim.<=# b)
+leInt# a b = Bool.fromInt# (a GHC.<=# b)
 
 -- Int8# -----------------------------------------------------------------------
 
@@ -281,7 +261,7 @@ leInt# a b = unsafeCoerce# (a Prim.<=# b)
 --
 -- @since 1.0.0
 showInt8# :: Int8# -> String
-showInt8# x = shows (fromInt8# x) "#"
+showInt8# x = shows (I# (Prim.Compat.int8ToInt# x)) "#"
 
 -- Int8# - Arithmetic ----------------------------------------------------------
 
@@ -298,7 +278,7 @@ infixl 7 `mulInt8#`
 --
 -- @since 1.0.0
 addInt8# :: Int8# -> Int8# -> Int8#
-addInt8# a b = Prim.plusInt8# a b
+addInt8# = GHC.plusInt8#
 
 -- | Subtraction of two 'Int8#' values.
 --
@@ -306,7 +286,7 @@ addInt8# a b = Prim.plusInt8# a b
 --
 -- @since 1.0.0
 subInt8# :: Int8# -> Int8# -> Int8#
-subInt8# a b = Prim.subInt8# a b
+subInt8# = GHC.subInt8#
 
 -- | Multiplication of two 'Int8#' values.
 --
@@ -314,19 +294,13 @@ subInt8# a b = Prim.subInt8# a b
 --
 -- @since 1.0.0
 mulInt8# :: Int8# -> Int8# -> Int8#
-mulInt8# a b = Prim.timesInt8# a b
+mulInt8# = GHC.timesInt8#
 
 -- | Unary negation of an 'Int8#' value.
 --
 -- @since 1.0.0
-negateInt8# :: Int8# -> Int8#
-negateInt8# = Prim.negateInt8#
-
--- | Take the absolute value of an 'Int8#'.
---
--- @since 1.0.0
-absInt8# :: Int8# -> Int8#
-absInt8# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
+negInt8# :: Int8# -> Int8#
+negInt8# = GHC.negateInt8#
 
 -- | Take the sign of an 'Int8#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
@@ -334,9 +308,9 @@ absInt8# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
 -- @since 1.0.0
 signumInt8# :: Int8# -> Int#
 signumInt8# x =
-  let cmp0 = Prim.ltInt8# (unsafeCoerce# 0#) x
-      cmp1 = Prim.ltInt8# x (unsafeCoerce# 0#)
-   in cmp0 Prim.-# cmp1
+  let cmp0 = GHC.ltInt8# (Prim.Compat.intToInt8# 0#) x
+      cmp1 = GHC.ltInt8# x (Prim.Compat.intToInt8# 0#)
+   in cmp0 GHC.-# cmp1
 
 -- Int8# - Comparison ----------------------------------------------------------
 
@@ -350,37 +324,37 @@ infix 4 `gtInt8#`, `geInt8#`, `eqInt8#`, `neInt8#`, `ltInt8#`, `leInt8#`
 --
 -- @since 1.0.0
 eqInt8# :: Int8# -> Int8# -> Bool#
-eqInt8# a b = unsafeCoerce# (Prim.eqInt8# a b)
+eqInt8# a b = Bool.fromInt# (GHC.eqInt8# a b)
 
 -- | "Not equal to" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 neInt8# :: Int8# -> Int8# -> Bool#
-neInt8# a b = unsafeCoerce# (Prim.neInt8# a b)
+neInt8# a b = Bool.fromInt# (GHC.neInt8# a b)
 
 -- | "Greater than" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 gtInt8# :: Int8# -> Int8# -> Bool#
-gtInt8# a b = unsafeCoerce# (Prim.gtInt8# a b)
+gtInt8# a b = Bool.fromInt# (GHC.gtInt8# a b)
 
 -- | "Greater than or equal to" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 geInt8# :: Int8# -> Int8# -> Bool#
-geInt8# a b = unsafeCoerce# (Prim.geInt8# a b)
+geInt8# a b = Bool.fromInt# (GHC.geInt8# a b)
 
 -- | "Less than" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 ltInt8# :: Int8# -> Int8# -> Bool#
-ltInt8# a b = unsafeCoerce# (Prim.ltInt8# a b)
+ltInt8# a b = Bool.fromInt# (GHC.ltInt8# a b)
 
 -- | "Less than or equal to" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 leInt8# :: Int8# -> Int8# -> Bool#
-leInt8# a b = unsafeCoerce# (Prim.leInt8# a b)
+leInt8# a b = Bool.fromInt# (GHC.leInt8# a b)
 
 -- Int16# ----------------------------------------------------------------------
 
@@ -395,7 +369,7 @@ leInt8# a b = unsafeCoerce# (Prim.leInt8# a b)
 --
 -- @since 1.0.0
 showInt16# :: Int16# -> String
-showInt16# x = shows (fromInt16# x) "#"
+showInt16# x = shows (I# (Prim.Compat.int16ToInt# x)) "#"
 
 -- Int16# - Arithmetic ---------------------------------------------------------
 
@@ -412,7 +386,7 @@ infixl 7 `mulInt16#`
 --
 -- @since 1.0.0
 addInt16# :: Int16# -> Int16# -> Int16#
-addInt16# a b = Prim.plusInt16# a b
+addInt16# = GHC.plusInt16#
 
 -- | Subtraction of two 'Int16#' values.
 --
@@ -420,7 +394,7 @@ addInt16# a b = Prim.plusInt16# a b
 --
 -- @since 1.0.0
 subInt16# :: Int16# -> Int16# -> Int16#
-subInt16# a b = Prim.subInt16# a b
+subInt16# = GHC.subInt16#
 
 -- | Multiplication of two 'Int16#' values.
 --
@@ -428,19 +402,13 @@ subInt16# a b = Prim.subInt16# a b
 --
 -- @since 1.0.0
 mulInt16# :: Int16# -> Int16# -> Int16#
-mulInt16# a b = Prim.timesInt16# a b
+mulInt16# = GHC.timesInt16#
 
 -- | Unary negation of an 'Int16#' value.
 --
 -- @since 1.0.0
-negateInt16# :: Int16# -> Int16#
-negateInt16# = Prim.negateInt16#
-
--- | Take the absolute value of an 'Int16#'.
---
--- @since 1.0.0
-absInt16# :: Int16# -> Int16#
-absInt16# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
+negInt16# :: Int16# -> Int16#
+negInt16# = GHC.negateInt16#
 
 -- | Take the sign of an 'Int16#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
@@ -448,9 +416,9 @@ absInt16# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
 -- @since 1.0.0
 signumInt16# :: Int16# -> Int#
 signumInt16# x =
-  let cmp0 = Prim.ltInt16# (unsafeCoerce# 0#) x
-      cmp1 = Prim.ltInt16# x (unsafeCoerce# 0#)
-   in cmp0 Prim.-# cmp1
+  let cmp0 = GHC.ltInt16# (Prim.Compat.intToInt16# 0#) x
+      cmp1 = GHC.ltInt16# x (Prim.Compat.intToInt16# 0#)
+   in cmp0 GHC.-# cmp1
 
 -- Int16# - Comparison ---------------------------------------------------------
 
@@ -464,37 +432,37 @@ infix 4 `gtInt16#`, `geInt16#`, `eqInt16#`, `neInt16#`, `ltInt16#`, `leInt16#`
 --
 -- @since 1.0.0
 eqInt16# :: Int16# -> Int16# -> Bool#
-eqInt16# a b = unsafeCoerce# (Prim.eqInt16# a b)
+eqInt16# a b = Bool.fromInt# (GHC.eqInt16# a b)
 
 -- | "Not equal to" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 neInt16# :: Int16# -> Int16# -> Bool#
-neInt16# a b = unsafeCoerce# (Prim.neInt16# a b)
+neInt16# a b = Bool.fromInt# (GHC.neInt16# a b)
 
 -- | "Greater than" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 gtInt16# :: Int16# -> Int16# -> Bool#
-gtInt16# a b = unsafeCoerce# (Prim.gtInt16# a b)
+gtInt16# a b = Bool.fromInt# (GHC.gtInt16# a b)
 
 -- | "Greater than or equal to" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 geInt16# :: Int16# -> Int16# -> Bool#
-geInt16# a b = unsafeCoerce# (Prim.geInt16# a b)
+geInt16# a b = Bool.fromInt# (GHC.geInt16# a b)
 
 -- | "Less than" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 ltInt16# :: Int16# -> Int16# -> Bool#
-ltInt16# a b = unsafeCoerce# (Prim.ltInt16# a b)
+ltInt16# a b = Bool.fromInt# (GHC.ltInt16# a b)
 
 -- | "Less than or equal to" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 leInt16# :: Int16# -> Int16# -> Bool#
-leInt16# a b = unsafeCoerce# (Prim.leInt16# a b)
+leInt16# a b = Bool.fromInt# (GHC.leInt16# a b)
 
 -- Int32# ----------------------------------------------------------------------
 
@@ -509,7 +477,7 @@ leInt16# a b = unsafeCoerce# (Prim.leInt16# a b)
 --
 -- @since 1.0.0
 showInt32# :: Int32# -> String
-showInt32# x = shows (fromInt32# x) "#"
+showInt32# x = shows (I# (Prim.Compat.int32ToInt# x)) "#"
 
 -- Int32# - Arithmetic ---------------------------------------------------------
 
@@ -526,7 +494,7 @@ infixl 7 `mulInt32#`
 --
 -- @since 1.0.0
 addInt32# :: Int32# -> Int32# -> Int32#
-addInt32# a b = Prim.plusInt32# a b
+addInt32# = GHC.plusInt32#
 
 -- | Subtraction of two 'Int32#' values.
 --
@@ -534,7 +502,7 @@ addInt32# a b = Prim.plusInt32# a b
 --
 -- @since 1.0.0
 subInt32# :: Int32# -> Int32# -> Int32#
-subInt32# a b = Prim.subInt32# a b
+subInt32# = GHC.subInt32#
 
 -- | Multiplication of two 'Int32#' values.
 --
@@ -542,19 +510,13 @@ subInt32# a b = Prim.subInt32# a b
 --
 -- @since 1.0.0
 mulInt32# :: Int32# -> Int32# -> Int32#
-mulInt32# a b = Prim.timesInt32# a b
+mulInt32# = GHC.timesInt32#
 
 -- | Unary negation of an 'Int32#' value.
 --
 -- @since 1.0.0
-negateInt32# :: Int32# -> Int32#
-negateInt32# = Prim.negateInt32#
-
--- | Take the absolute value of an 'Int32#'.
---
--- @since 1.0.0
-absInt32# :: Int32# -> Int32#
-absInt32# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
+negInt32# :: Int32# -> Int32#
+negInt32# = GHC.negateInt32#
 
 -- | Take the sign of an 'Int32#' value resulting in either -1 (negative),
 -- 0 (zero) or 1 (positive).
@@ -562,9 +524,9 @@ absInt32# x = unsafeCoerce# (absInt# (unsafeCoerce# x))
 -- @since 1.0.0
 signumInt32# :: Int32# -> Int#
 signumInt32# x =
-  let cmp0 = Prim.ltInt32# (unsafeCoerce# 0#) x
-      cmp1 = Prim.ltInt32# x (unsafeCoerce# 0#)
-   in cmp0 Prim.-# cmp1
+  let cmp0 = GHC.ltInt32# (Prim.Compat.intToInt32# 0#) x
+      cmp1 = GHC.ltInt32# x (Prim.Compat.intToInt32# 0#)
+   in cmp0 GHC.-# cmp1
 
 -- Int32# - Comparison ---------------------------------------------------------
 
@@ -578,34 +540,34 @@ infix 4 `gtInt32#`, `geInt32#`, `eqInt32#`, `neInt32#`, `ltInt32#`, `leInt32#`
 --
 -- @since 1.0.0
 eqInt32# :: Int32# -> Int32# -> Bool#
-eqInt32# a b = unsafeCoerce# (Prim.eqInt32# a b)
+eqInt32# a b = Bool.fromInt# (Prim.Compat.eqInt32# a b)
 
 -- | "Not equal to" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 neInt32# :: Int32# -> Int32# -> Bool#
-neInt32# a b = unsafeCoerce# (Prim.neInt32# a b)
+neInt32# a b = Bool.fromInt# (Prim.Compat.neInt32# a b)
 
 -- | "Greater than" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 gtInt32# :: Int32# -> Int32# -> Bool#
-gtInt32# a b = unsafeCoerce# (Prim.gtInt32# a b)
+gtInt32# a b = Bool.fromInt# (Prim.Compat.gtInt32# a b)
 
 -- | "Greater than or equal to" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 geInt32# :: Int32# -> Int32# -> Bool#
-geInt32# a b = unsafeCoerce# (Prim.geInt32# a b)
+geInt32# a b = Bool.fromInt# (Prim.Compat.geInt32# a b)
 
 -- | "Less than" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 ltInt32# :: Int32# -> Int32# -> Bool#
-ltInt32# a b = unsafeCoerce# (Prim.ltInt32# a b)
+ltInt32# a b = Bool.fromInt# (Prim.Compat.ltInt32# a b)
 
 -- | "Less than or equal to" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 leInt32# :: Int32# -> Int32# -> Bool#
-leInt32# a b = unsafeCoerce# (Prim.leInt32# a b)
+leInt32# a b = Bool.fromInt# (Prim.Compat.leInt32# a b)

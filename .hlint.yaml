@@ -1,0 +1,24 @@
+
+- package:
+  name: prim-bool
+  modules:
+  - import Data.Bool.Prim
+  - import Data.Bool.Prim.Rep
+
+- package:
+  name: prim-compat
+  modules:
+  - import Data.Int.Prim.Compat
+  - import Data.Word.Prim.Compat
+
+- modules:
+  - {name: '**', qualifiedStyle: post}
+
+  - {name: GHC.Classes, as: GHC, message: "Error: qualify GHC.Exts as GHC"} 
+  - {name: GHC.Exts,    as: GHC, message: "Error: qualify GHC.Exts as GHC"} 
+
+  - {name: GHC.Magic, within: [], message: "Error: use GHC.Exts"} 
+  - {name: GHC.Prim,  within: [], message: "Error: use GHC.Exts"} 
+
+- functions: 
+  - {name: unsafeCoerce#, within: [], message: "unsafeCoerce# is highly unsafe"}

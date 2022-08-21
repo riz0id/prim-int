@@ -27,6 +27,14 @@ let
   };
 
 in {
-  inherit (pkgs.haskell.packages."${ghc}") prim-int;
-  inherit (pkgs) cabal-install clang haskell-language-server llvm;
+  inherit (pkgs.haskell.packages."${ghc}") 
+    fourmolu
+    hlint
+    haskell-language-server 
+    prim-int;
+
+  inherit (pkgs)
+    cabal-install 
+    clang 
+    llvm;
 }

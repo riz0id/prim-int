@@ -6,7 +6,7 @@ version:     1.0.0
 synopsis:    Facilities for working with unlifted integers.
 description: Facilities for working with unlifted integers.
 
-author:       jake
+author:       jacob leach
 maintainer:   jacobleach@protonmail.com
 copyright:    2022, Jacob Leach
 homepage:     https://github.com/riz0id/prim-int
@@ -53,9 +53,6 @@ common common
 library
   import:         common
   hs-source-dirs: src
-
-  default-extensions: 
-    CPP MagicHash
 
   if flag(llvm) 
     ghc-options: -fllvm 

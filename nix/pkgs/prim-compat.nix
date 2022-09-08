@@ -1,9 +1,18 @@
-{ fetchTarball ? builtins.fetchTarball }:
-
-let 
-  pkg = "prim-compat";
-  rev = "1.0.0";
-in fetchTarball {
-  url    = "https://github.com/riz0id/${pkg}/releases/download/${rev}/${pkg}-${rev}.tar.gz";
-  sha256 = "0l104ypis2bjbkiwl33pw9ql7c7h4pd622g2hx5vp5fa33widgx3";
+{ mkDerivation, base, fetchgit, ghc-prim, hedgehog, lib, tasty
+, tasty-hedgehog
+}:
+mkDerivation {
+  pname = "prim-compat";
+  version = "1.0.0";
+  src = fetchgit {
+    url = "https://github.com/riz0id/prim-compat";
+    sha256 = "1chjxab9pm1x3rm384jcs0zavxlp34bz56fcpc4p8xh10ggv25xc";
+    rev = "1bfd13c3ce8425a6fb0ddb71986861d0d9724863";
+    fetchSubmodules = true;
+  };
+  libraryHaskellDepends = [ base ghc-prim ];
+  testHaskellDepends = [ base hedgehog tasty tasty-hedgehog ];
+  homepage = "https://github.com/riz0id/prim-compat";
+  description = "Lightweight ghc-prim wrappers for backwards compatibility";
+  license = lib.licenses.isc;
 }

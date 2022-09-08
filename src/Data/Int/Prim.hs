@@ -25,9 +25,8 @@ module Data.Int.Prim
   ( -- * Int# #int#
     -- $section-int
     Int#,
-    Prim.Compat.fromInt,
-    Prim.Compat.toInt,
-    showInt#,
+    Prim.Compat.fromInt#,
+    Prim.Compat.toInt#,
 
     -- ** Arithmetic #int-arithmetic#
     -- $section-int-arithmetic
@@ -47,12 +46,14 @@ module Data.Int.Prim
     ltInt#,
     leInt#,
 
+    -- ** Show
+    showInt#,
+
     -- * Int8# #int8#
     -- $section-int8
     Int8#,
-    Prim.Compat.intToInt8#,
-    Prim.Compat.int8ToInt#,
-    showInt8#,
+    Prim.Compat.fromInt8#,
+    Prim.Compat.toInt8#,
 
     -- ** Arithmetic #int8-arithmetic#
     -- $section-int8-arithmetic
@@ -71,12 +72,18 @@ module Data.Int.Prim
     ltInt8#,
     leInt8#,
 
+    -- ** Conversion
+    Prim.Compat.int8ToInt#,
+    Prim.Compat.intToInt8#,
+
+    -- ** Show
+    showInt8#,
+
     -- * Int16# #int16#
     -- $section-int16
     Int16#,
-    Prim.Compat.intToInt16#,
-    Prim.Compat.int16ToInt#,
-    showInt16#,
+    Prim.Compat.fromInt16#,
+    Prim.Compat.toInt16#,
 
     -- ** Arithmetic #int16-arithmetic#
     -- $section-int16-arithmetic
@@ -94,13 +101,19 @@ module Data.Int.Prim
     geInt16#,
     ltInt16#,
     leInt16#,
+    
+    -- ** Conversion
+    Prim.Compat.int16ToInt#,
+    Prim.Compat.intToInt16#,
+
+    -- ** Show
+    showInt16#,
 
     -- * Int32# #int32#
     -- $section-int32
     Int32#,
-    Prim.Compat.int32ToInt#,
-    Prim.Compat.intToInt32#,
-    showInt32#,
+    Prim.Compat.fromInt32#,
+    Prim.Compat.toInt32#,
 
     -- ** Arithmetic #int32-arithmetic#
     -- $section-int32-arithmetic
@@ -118,6 +131,13 @@ module Data.Int.Prim
     geInt32#,
     ltInt32#,
     leInt32#,
+
+    -- ** Conversion
+    Prim.Compat.int32ToInt#,
+    Prim.Compat.intToInt32#,
+
+    -- ** Show
+    showInt32#,
   )
 where
 

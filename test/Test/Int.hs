@@ -4,7 +4,7 @@
 
 module Test.Int (testTree) where
 
-import Data.Bool.Prim (Bool#, toBool#)
+import Data.Bool.Prim (Bool#, toBool)
 import Data.Int.Prim
 
 import GHC.Int (Int (I#))
@@ -49,4 +49,4 @@ comparison :: (Int# -> Int# -> Bool#) -> (Int -> Int -> Bool) -> Property
 comparison op# op = property $ do
   x@(toInt# -> x#) <- forAll (Gen.int Range.constantBounded)
   y@(toInt# -> y#) <- forAll (Gen.int Range.constantBounded)
-  op x y === toBool# (op# x# y#)
+  op x y === toBool (op# x# y#)

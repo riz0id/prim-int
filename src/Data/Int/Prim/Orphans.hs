@@ -23,7 +23,7 @@ import Data.Int.Prim.Compat
     intToInt16#,
     intToInt32#,
     intToInt8#,
-    toInt,
+    toInt#,
   )
 
 import GHC.Exts (Int (I#), Int16#, Int32#, Int8#)
@@ -44,7 +44,7 @@ instance Lift Int8# where
   lift x =
     let conE = VarE 'intToInt8#
         litE = LitE (IntPrimL (fromIntegral (I# (int8ToInt# x))))
-     in pure (conE `AppE` VarE 'toInt `AppE` litE)
+     in pure (conE `AppE` VarE 'toInt# `AppE` litE)
 
   liftTyped x = unsafeCodeCoerce (lift x)
 
@@ -57,7 +57,7 @@ instance Lift Int16# where
   lift x =
     let conE = VarE 'intToInt16#
         litE = LitE (IntPrimL (fromIntegral (I# (int16ToInt# x))))
-     in pure (conE `AppE` VarE 'toInt `AppE` litE)
+     in pure (conE `AppE` VarE 'toInt# `AppE` litE)
 
   liftTyped x = unsafeCodeCoerce (lift x)
 
@@ -70,6 +70,6 @@ instance Lift Int32# where
   lift x =
     let conE = VarE 'intToInt32#
         litE = LitE (IntPrimL (fromIntegral (I# (int32ToInt# x))))
-     in pure (conE `AppE` VarE 'toInt `AppE` litE)
+     in pure (conE `AppE` VarE 'toInt# `AppE` litE)
 
   liftTyped x = unsafeCodeCoerce (lift x)

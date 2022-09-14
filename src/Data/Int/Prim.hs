@@ -236,37 +236,37 @@ infix 4 `gtInt#`, `geInt#`, `eqInt#`, `neInt#`, `ltInt#`, `leInt#`
 --
 -- @since 1.0.0
 gtInt# :: Int# -> Int# -> Bool#
-gtInt# a b = Bool.fromInt# (a GHC.># b)
+gtInt# a b = Bool.unsafeFromInt# (a GHC.># b)
 
 -- | "Greater than or equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 geInt# :: Int# -> Int# -> Bool#
-geInt# a b = Bool.fromInt# (a GHC.>=# b)
+geInt# a b = Bool.unsafeFromInt# (a GHC.>=# b)
 
 -- | "Equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 eqInt# :: Int# -> Int# -> Bool#
-eqInt# a b = Bool.fromInt# (a GHC.==# b)
+eqInt# a b = Bool.unsafeFromInt# (a GHC.==# b)
 
 -- | "Not equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 neInt# :: Int# -> Int# -> Bool#
-neInt# a b = Bool.fromInt# (a GHC./=# b)
+neInt# a b = Bool.unsafeFromInt# (a GHC./=# b)
 
 -- | "Less than" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 ltInt# :: Int# -> Int# -> Bool#
-ltInt# a b = Bool.fromInt# (a GHC.<# b)
+ltInt# a b = Bool.unsafeFromInt# (a GHC.<# b)
 
 -- | "Less than or equal to" comparison on two 'Int#' values.
 --
 -- @since 1.0.0
 leInt# :: Int# -> Int# -> Bool#
-leInt# a b = Bool.fromInt# (a GHC.<=# b)
+leInt# a b = Bool.unsafeFromInt# (a GHC.<=# b)
 
 -- Int8# -----------------------------------------------------------------------
 
@@ -344,37 +344,37 @@ infix 4 `gtInt8#`, `geInt8#`, `eqInt8#`, `neInt8#`, `ltInt8#`, `leInt8#`
 --
 -- @since 1.0.0
 eqInt8# :: Int8# -> Int8# -> Bool#
-eqInt8# a b = Bool.fromInt# (GHC.eqInt8# a b)
+eqInt8# a b = Bool.unsafeFromInt# (GHC.eqInt8# a b)
 
 -- | "Not equal to" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 neInt8# :: Int8# -> Int8# -> Bool#
-neInt8# a b = Bool.fromInt# (GHC.neInt8# a b)
+neInt8# a b = Bool.unsafeFromInt# (GHC.neInt8# a b)
 
 -- | "Greater than" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 gtInt8# :: Int8# -> Int8# -> Bool#
-gtInt8# a b = Bool.fromInt# (GHC.gtInt8# a b)
+gtInt8# a b = Bool.unsafeFromInt# (GHC.gtInt8# a b)
 
 -- | "Greater than or equal to" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 geInt8# :: Int8# -> Int8# -> Bool#
-geInt8# a b = Bool.fromInt# (GHC.geInt8# a b)
+geInt8# a b = Bool.unsafeFromInt# (GHC.geInt8# a b)
 
 -- | "Less than" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 ltInt8# :: Int8# -> Int8# -> Bool#
-ltInt8# a b = Bool.fromInt# (GHC.ltInt8# a b)
+ltInt8# a b = Bool.unsafeFromInt# (GHC.ltInt8# a b)
 
 -- | "Less than or equal to" comparison on two 'Int8#' values.
 --
 -- @since 1.0.0
 leInt8# :: Int8# -> Int8# -> Bool#
-leInt8# a b = Bool.fromInt# (GHC.leInt8# a b)
+leInt8# a b = Bool.unsafeFromInt# (GHC.leInt8# a b)
 
 -- Int16# ----------------------------------------------------------------------
 
@@ -452,37 +452,37 @@ infix 4 `gtInt16#`, `geInt16#`, `eqInt16#`, `neInt16#`, `ltInt16#`, `leInt16#`
 --
 -- @since 1.0.0
 eqInt16# :: Int16# -> Int16# -> Bool#
-eqInt16# a b = Bool.fromInt# (GHC.eqInt16# a b)
+eqInt16# a b = Bool.unsafeFromInt# (GHC.eqInt16# a b)
 
 -- | "Not equal to" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 neInt16# :: Int16# -> Int16# -> Bool#
-neInt16# a b = Bool.fromInt# (GHC.neInt16# a b)
+neInt16# a b = Bool.unsafeFromInt# (GHC.neInt16# a b)
 
 -- | "Greater than" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 gtInt16# :: Int16# -> Int16# -> Bool#
-gtInt16# a b = Bool.fromInt# (GHC.gtInt16# a b)
+gtInt16# a b = Bool.unsafeFromInt# (GHC.gtInt16# a b)
 
 -- | "Greater than or equal to" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 geInt16# :: Int16# -> Int16# -> Bool#
-geInt16# a b = Bool.fromInt# (GHC.geInt16# a b)
+geInt16# a b = Bool.unsafeFromInt# (GHC.geInt16# a b)
 
 -- | "Less than" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 ltInt16# :: Int16# -> Int16# -> Bool#
-ltInt16# a b = Bool.fromInt# (GHC.ltInt16# a b)
+ltInt16# a b = Bool.unsafeFromInt# (GHC.ltInt16# a b)
 
 -- | "Less than or equal to" comparison on two 'Int16#' values.
 --
 -- @since 1.0.0
 leInt16# :: Int16# -> Int16# -> Bool#
-leInt16# a b = Bool.fromInt# (GHC.leInt16# a b)
+leInt16# a b = Bool.unsafeFromInt# (GHC.leInt16# a b)
 
 -- Int32# ----------------------------------------------------------------------
 
@@ -560,34 +560,34 @@ infix 4 `gtInt32#`, `geInt32#`, `eqInt32#`, `neInt32#`, `ltInt32#`, `leInt32#`
 --
 -- @since 1.0.0
 eqInt32# :: Int32# -> Int32# -> Bool#
-eqInt32# a b = Bool.fromInt# (Prim.Compat.eqInt32# a b)
+eqInt32# a b = Bool.unsafeFromInt# (Prim.Compat.eqInt32# a b)
 
 -- | "Not equal to" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 neInt32# :: Int32# -> Int32# -> Bool#
-neInt32# a b = Bool.fromInt# (Prim.Compat.neInt32# a b)
+neInt32# a b = Bool.unsafeFromInt# (Prim.Compat.neInt32# a b)
 
 -- | "Greater than" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 gtInt32# :: Int32# -> Int32# -> Bool#
-gtInt32# a b = Bool.fromInt# (Prim.Compat.gtInt32# a b)
+gtInt32# a b = Bool.unsafeFromInt# (Prim.Compat.gtInt32# a b)
 
 -- | "Greater than or equal to" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 geInt32# :: Int32# -> Int32# -> Bool#
-geInt32# a b = Bool.fromInt# (Prim.Compat.geInt32# a b)
+geInt32# a b = Bool.unsafeFromInt# (Prim.Compat.geInt32# a b)
 
 -- | "Less than" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 ltInt32# :: Int32# -> Int32# -> Bool#
-ltInt32# a b = Bool.fromInt# (Prim.Compat.ltInt32# a b)
+ltInt32# a b = Bool.unsafeFromInt# (Prim.Compat.ltInt32# a b)
 
 -- | "Less than or equal to" comparison on two 'Int32#' values.
 --
 -- @since 1.0.0
 leInt32# :: Int32# -> Int32# -> Bool#
-leInt32# a b = Bool.fromInt# (Prim.Compat.leInt32# a b)
+leInt32# a b = Bool.unsafeFromInt# (Prim.Compat.leInt32# a b)

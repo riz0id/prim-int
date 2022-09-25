@@ -1,15 +1,5 @@
 
-- package:
-  name: prim-bool
-  modules:
-  - import Data.Bool.Prim
-  - import Data.Bool.Prim.Rep
 
-- package:
-  name: prim-compat
-  modules:
-  - import Data.Int.Prim.Compat
-  - import Data.Word.Prim.Compat
 
 - modules:
   - {name: '**', qualifiedStyle: post}

@@ -1,4 +1,4 @@
-{ ghc ? "ghc922" }:
+{ ghc ? "ghc942" }:
 
 let 
   pkgs = import ./default.nix {
@@ -6,11 +6,6 @@ let
   };
 in pkgs.prim-int.env.overrideAttrs (self: {
   buildInputs = self.buildInputs ++ [
-    pkgs.cabal-install
-    pkgs.clang
-    pkgs.fourmolu
     pkgs.haskell-language-server
-    pkgs.hlint
-    pkgs.llvm
   ];
 })

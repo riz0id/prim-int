@@ -1,4 +1,4 @@
-{ ghc ? "ghc922" }:
+{ ghc }:
 
 final: prev: 
 
@@ -6,7 +6,7 @@ final: prev:
   haskell = prev.haskell // {
     packages = prev.haskell.packages // {
       "${ghc}" = prev.haskell.packages."${ghc}".extend (self: _: {
-        prim-bool = self.callPackage ../pkgs/haskell/packages/prim-bool.nix { };
+        prim-bool = self.callPackage ../pkgs/prim-bool.nix { };
       });
     };
   };

@@ -1,4 +1,4 @@
-{ ghc ? "ghc922" }:
+{ ghc }:
 
 final: prev: 
 
@@ -6,7 +6,7 @@ final: prev:
   haskell = prev.haskell // {
     packages = prev.haskell.packages // {
       "${ghc}" = prev.haskell.packages."${ghc}".extend (self: _: {
-        prim-compat = self.callPackage ../pkgs/haskell/packages/prim-compat.nix { };
+        prim-int = self.callCabal2nix "prim-int" ../../. { };
       });
     };
   };

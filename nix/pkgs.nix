@@ -1,18 +1,11 @@
-{ ghc ? "ghc922" }:
+args:
 
-let
-  nixpkgs = import ./nixpkgs.nix { };
-in import nixpkgs {
+import (import ./nixpkgs.nix) {
   config.packageOverrides = pkgs: 
-    pkgs.lib.composeManyExtensions [  
-      (import extensions/prim-bool.nix {
-        inherit ghc;
-      })
-      (import extensions/prim-compat.nix {
-        inherit ghc;
-      })
-      (import extensions/prim-int.nix {
-        inherit ghc;
-      })
-    ] pkgs pkgs;
+    pkgs.lib.composeManyExtensions (map (f: f args) [  
+      (import exts/prim-bool.nix)
+      (import exts/prim-compat.nix)
+      (import exts/prim-int.nix)
+      (import exts/tasty-hedgehog.nix)
+    ]) pkgs pkgs;
 }

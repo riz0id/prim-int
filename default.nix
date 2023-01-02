@@ -1,4 +1,4 @@
-{ ghc ? "ghc902" }:
+{ ghc }:
 
 let
   pkgs = import nix/pkgs.nix { 

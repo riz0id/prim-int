@@ -3,7 +3,7 @@ cradle:
     - path: "./src"
       component: "lib:prim-int"
     - path: "./test"
-      component: "test:test"
+      component: "test:prim-int-test"
 
 dependencies:
   - default.nix
